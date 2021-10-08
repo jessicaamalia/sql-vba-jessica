@@ -1,0 +1,40 @@
+Option Compare Database
+
+Private Sub Form_Load()
+    InsideHeight = 2500
+    InsideWidth = 4500
+    Me.tb_ID = Null
+    Me.tb_pwd = Null
+    Me.tb_ID.SetFocus
+    Call DoCmd.NavigateTo("Daily Activity")
+    Call DoCmd.RunCommand(acCmdWindowHide)
+End Sub
+
+Private Sub cmdLogIn_Click()
+    If IsNull(Me.tb_ID) Or IsNull(Me.tb_pwd) Then
+      MsgBox "You must enter password or login ID.", vbOKOnly + vbInformation, "Required Data"
+      Me.tb_ID.SetFocus
+        Exit Sub
+    End If
+    
+    If Me.tb_pwd.value = DLookup("[Login_Pwd]", "login_tbl", "[UserID]='" & Me.tb_ID.value & "'") Then
+        If DLookup("[User_Type]", "login_tbl", "[UserID]='" & Me.tb_ID.value & "'") = "Admin" Then
+            DoCmd.OpenForm "USER MANAGEMENT"
+        ElseIf DLookup("[User_Type]", "login_tbl", "[UserID]='" & Me.tb_ID.value & "'") = "UserA" Then
+            DoCmd.OpenForm "DASHBOARD"
+        ElseIf DLookup("[User_Type]", "login_tbl", "[UserID]='" & Me.tb_ID.value & "'") = "UserB" Then
+            DoCmd.OpenForm "DASHBOARD"
+        ElseIf DLookup("[User_Type]", "login_tbl", "[UserID]='" & Me.tb_ID.value & "'") = "UserC" Then
+            DoCmd.OpenForm "PROGRESS"
+        ElseIf DLookup("[User_Type]", "login_tbl", "[UserID]='" & Me.tb_ID.value & "'") = "UserD" Then
+            DoCmd.OpenForm "DASHBOARD"
+        End If
+        mstrUserName = Me.tb_ID.value
+        Debug.Print mstrUserName
+        DoCmd.Close acForm, "Log In", acSaveYes
+    Else
+      MsgBox "Password or login ID incorrect. Please Try Again", vbOKOnly + vbExclamation, "Invalid Entry!"
+      Me.tb_pwd.SetFocus
+    End If
+    
+End Sub
